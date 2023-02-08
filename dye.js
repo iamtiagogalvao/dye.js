@@ -8,6 +8,7 @@ const checkColor = (color, img = false, data = {}) => {
     result;
 
   if (color.startsWith("rgb(")) {
+    // CHECK RGB COLORS
     splittedColor = color.substr(4, color.length - 5).split(", ");
     r = splittedColor[0];
     g = splittedColor[1];
@@ -22,8 +23,26 @@ const checkColor = (color, img = false, data = {}) => {
     } else {
       return (textColor = result > 125 ? "rgb(0,0,0)" : "rgb(255,255,255)");
     }
-  } else if (color.includes("rgba(0, 0, 0, 0)")) {
-    console.log("Element does not have a background color.");
+  } else if (color.startsWith("rgba(")) {
+    // Check RGBA COLORS
+    let rgb = color;
+    let pattern = /^rgba?\((\d+),\s*(\d+),\s*(\d+)(,\s*\d+\.*\d+)?\)$/;
+    let matches = rgb.match(pattern);
+    let colorValue = Math.round(
+      (parseInt(matches[1]) * 299 +
+        parseInt(matches[2]) * 587 +
+        parseInt(matches[3]) * 114) /
+        1000
+    );
+
+    var colorOpacity = "";
+    if (matches[4]) {
+      var colorOpacity = matches[4].replace(", ", "");
+    }
+
+    return colorValue > 125 || parseFloat(colorOpacity) < 0.5
+      ? "rgb(0,0,0)"
+      : "rgb(255,255,255)";
   }
 };
 
@@ -70,6 +89,13 @@ const dye = () => {
 
       if (node.tagName !== "IMG") {
         bg = getParentBG(node);
+
+        if (bg === "rgba(0, 0, 0, 0)") {
+          //passes the node to getParentBG() to be able to get parent element bg color
+          bg = getParentBG(node.parentElement);
+          dye = checkColor(bg);
+        }
+
         dye = checkColor(bg);
       }
 
@@ -81,12 +107,6 @@ const dye = () => {
         );
         node.style.filter = dye;
         node.style.webkitFilter = dye;
-      }
-
-      if (bg === "rgba(0, 0, 0, 0)") {
-        //passes the node to getParentBG() to be able to get parent element bg color
-        bg = getParentBG(node.parentElement);
-        dye = checkColor(bg);
       }
     } else {
       if (node.tagName === "IMG") {
