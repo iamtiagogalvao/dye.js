@@ -1,7 +1,7 @@
 /**
  * Check color balance
  */
-const checkColor = (color, img = false, data = {}) => {
+const checkColor = (color, img = false, isBlackImg = false) => {
   let r = 0,
     g = 0,
     b = 0,
@@ -17,7 +17,7 @@ const checkColor = (color, img = false, data = {}) => {
       (parseInt(r) * 299 + parseInt(g) * 587 + parseInt(b) * 114) / 1000
     );
     if (img) {
-      return data.blackimg
+      return isblackImg
         ? (imgFilter = result > 125 ? "" : "grayscale(1) invert(1)")
         : (imgFilter = result > 125 ? "grayscale(1) invert(1)" : "");
     } else {
@@ -51,27 +51,46 @@ const checkColor = (color, img = false, data = {}) => {
  * @param parentEl - The element of which we want to get the background color
  */
 
-const getParentBG = (parentEl, selector = false) => {
-  let bg;
+const getParentBG = (parentEl, selector = false, gradient = false) => {
+  let bg, bgColor;
 
   //Fetch the bg
-  const fetchBG = (element) => {
-    let bgColor = window.getComputedStyle
-      ? window
-          .getComputedStyle(element, null)
-          .getPropertyValue("background-color")
-      : element.style.backgroundColor;
+  const fetchBG = (element, gradient = false) => {
+    if (gradient) {
+      bgColor = window.getComputedStyle
+        ? window.getComputedStyle(element, null).getPropertyValue("background")
+        : element.style.background;
+    } else {
+      bgColor = window.getComputedStyle
+        ? window
+            .getComputedStyle(element, null)
+            .getPropertyValue("background-color")
+        : element.style.backgroundColor;
+    }
 
     return bgColor;
   };
 
   if (selector) {
     let selectedEl = document.querySelector(selector);
-    bg = fetchBG(selectedEl);
+    //Check if is gradient
+    if (gradient) {
+      bg = fetchBG(selectedEl, true);
+    } else {
+      bg = fetchBG(selectedEl);
+    }
   } else {
-    bg = fetchBG(parentEl);
+    //Check if is gradient
+    if (gradient) {
+      bg = fetchBG(parentEl, true);
+    } else {
+      bg = fetchBG(parentEl);
+    }
   }
 
+  /**
+   * THIS NOW ALSO RETURNS GRADIENTS, NEED TO FIGURE OUT WHAT TO DO WITH THEM
+   */
   return bg;
 };
 
@@ -81,7 +100,9 @@ const getParentBG = (parentEl, selector = false) => {
 const dye = () => {
   document.querySelectorAll("[dye]").forEach((node) => {
     let parentNode = node.attributes.dye.value,
-      dye;
+      dye,
+      gradient = node.attributes.gradient,
+      blackImg = node.attributes.blackimg;
 
     // If the node target is self or empty -> pass self
     if (parentNode === "self" || parentNode === "") {
@@ -92,7 +113,10 @@ const dye = () => {
 
         if (bg === "rgba(0, 0, 0, 0)") {
           //passes the node to getParentBG() to be able to get parent element bg color
-          bg = getParentBG(node.parentElement);
+          bg = gradient
+            ? getParentBG(node.parentElement, null, true)
+            : getParentBG(node.parentElement);
+
           dye = checkColor(bg);
         }
 
@@ -109,11 +133,14 @@ const dye = () => {
         node.style.webkitFilter = dye;
       }
     } else {
+      //If the "dye" property has an element to target
+
       if (node.tagName === "IMG") {
         dye = checkColor(getParentBG(null, parentNode), true);
         node.style.filter = dye;
         node.style.webkitFilter = dye;
       } else {
+        //if is not an image
         bg = getParentBG(null, parentNode);
         dye = checkColor(bg);
       }
