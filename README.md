@@ -9,8 +9,8 @@
   <a href="https://github.com/Slaveworx/dye.js/graphs/commit-activity" target="_blank">
     <img alt="Maintenance" src="https://img.shields.io/badge/Maintained%3F-yes-green.svg" />
   </a>
-  <a href="https://github.com/Slaveworx/dye.js/blob/master/LICENSE" target="_blank">
-    <img alt="License: MIT" src="https://img.shields.io/github/license/Slaveworx/dye.js" />
+  <a href="https://github.com/Slaveworx/dye.js/stable/LICENSE" target="_blank">
+    <img alt="License: MIT" src="https://img.shields.io/github/license/Slaveworx/dye.js/stable/" />
   </a>
 </p>
 
@@ -22,8 +22,11 @@
 
 - npm >=8.19.2
 - node >=16.17.0
+- Works in any modern browser
 
 ## Usage
+
+Just apply the property "dye" to any regular HTML element and see the magic happen.
 
 ```sh
 <p dye>This element will change color depending on self or the parent background color</p>
