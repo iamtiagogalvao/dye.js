@@ -26,11 +26,11 @@
 
 ## Usage
 
-#ELEMENTS
+### ELEMENTS
 Just apply the property "dye" to any regular HTML element and see the magic happen.
 
 
-```sh
+```html
 <p dye>This element will change color depending on self or the parent background color</p>
 ```
 
@@ -38,34 +38,33 @@ The instruction above will only work on element which have a background color th
 
 If that is not the case, then you need to specify the parent:
 
-```sh
+```html
 <p dye=".this-is-the-element-with-bg">This element will change color depending on the provided element's background color</p>
 ```
 
-##IMAGES
+### IMAGES
 
 At the moment, this library only changes the color of black / white images or icons.
 
 So you just follow the same logic as above, but there is a small catch: if your source image is originally black, you need to specify another parameter (`blackimg`) to the element:
-
-```sh
-<img src="blackimage.png" dye blackimg>This element will change color depending on the parent background color</img>
+```html
+<img src="blackimage.png" dye="#this-is-an-id" blackimg>This element will change color depending on the parent background color</img>
 ```
 
 Note: by default, when the element is an image, the library will always check the parent background color. If you wish to use another color in a remote relative, just provide the element to the `dye=""` parameter.
 
-```sh
+```html
 <img src="blackimage.png" dye="#this-in-the-element-with-bg-color" blackimg>This element will change color depending on the parent background color</img>
 ```
 
-##IMPORTANT NOTES
-When you specify a selector, you need to identify it as a `class` or `id``, so please use the below syntax:
+### IMPORTANT NOTES
+When you specify a selector, you need to identify it as a `class` or `id`, so please use the below syntax:
 
-```sh
+```html
 <img src="blackimage.png" dye="#this-is-an-id" blackimg>This element will change color depending on the parent background color</img>
 ```
 
-```sh
+```html
 <img src="blackimage.png" dye=".this-is-an-class" blackimg>This element will change color depending on the parent background color</img>
 ```
 
