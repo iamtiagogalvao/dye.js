@@ -27,11 +27,12 @@
 ## Usage
 
 ### ELEMENTS
-Just apply the property "dye" to any regular HTML element and see the magic happen.
 
+Just apply the property "dye" to any regular HTML element and see the magic happen.
+Please note that the `dye` attribute by itself _will only work with elements that have a background color themselves_.
 
 ```html
-<p dye>This element will change color depending on self or the parent background color</p>
+<p dye>This element will change color depending on self background color</p>
 ```
 
 The instruction above will only work on element which have a background color themselves or in images in which the parent element has a background color.
@@ -39,7 +40,10 @@ The instruction above will only work on element which have a background color th
 If that is not the case, then you need to specify the parent:
 
 ```html
-<p dye=".this-is-the-element-with-bg">This element will change color depending on the provided element's background color</p>
+<p dye=".this-is-the-element-with-bg">
+  This element will change color depending on the provided element's background
+  color
+</p>
 ```
 
 ### IMAGES
@@ -47,6 +51,7 @@ If that is not the case, then you need to specify the parent:
 At the moment, this library only changes the color of black / white images or icons.
 
 So you just follow the same logic as above, but there is a small catch: if your source image is originally black, you need to specify another parameter (`blackimg`) to the element:
+
 ```html
 <img src="blackimage.png" dye="#this-is-an-id" blackimg>This element will change color depending on the parent background color</img>
 ```
@@ -57,7 +62,25 @@ Note: by default, when the element is an image, the library will always check th
 <img src="blackimage.png" dye="#this-in-the-element-with-bg-color" blackimg>This element will change color depending on the parent background color</img>
 ```
 
+### Gradients
+
+From version 0.4.3 dye.js now supports gradients up to three colors.
+
+Please bear in mind that depending on gradient direction or gradient transparencies and color positions, the output might not be 100% accurate.
+However, dye.js works very well with relatively simple gradient backgrounds.
+Note: this feature only works changing text color for now.
+Note 2: This feature supports colors in RGB, RGBA, and HEX.
+
+To use it you just need to add the `gradient` attribute to elements that have a gradient background and that you wish to change color dynamically.
+
+```html
+<p dye="#this-in-the-parent-id-with-gradient-bg" gradient>
+  This element will change color depending on the parent gradient background.
+</p>
+```
+
 ### IMPORTANT NOTES
+
 When you specify a selector, you need to identify it as a `class` or `id`, so please use the below syntax:
 
 ```html
@@ -69,10 +92,6 @@ When you specify a selector, you need to identify it as a `class` or `id`, so pl
 ```
 
 Note that we use `.` or `#` to let dye.js know that the selector is and `id` or `class`.
-
-### Gradients
-At the moment, the library does not support elements with gradients or images as bg.
-
 
 ## Author
 

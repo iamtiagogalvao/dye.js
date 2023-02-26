@@ -116,8 +116,9 @@ class Color {
         }
     }
 }
-class Dye {
+class Dye extends Color {
     constructor(htmlEntity) {
+        super();
         //Elements and Props to work with
         let selector = Dye.getProp(htmlEntity, "dye"), self = htmlEntity, parent = htmlEntity.parentElement, isGradient = Dye.getProp(htmlEntity, "gradient"), isBlackImg = Dye.getProp(htmlEntity, "blackimg") ? true : false, isImg = htmlEntity.tagName === "IMG" ? true : false;
         if (selector === "")

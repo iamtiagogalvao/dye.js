@@ -138,12 +138,13 @@ class Color {
   }
 }
 
-class Dye {
+class Dye extends Color {
   //Class Properties
   public bg: string;
   public imgFilter: string;
 
   constructor(htmlEntity: any) {
+    super();
     //Elements and Props to work with
     let selector = Dye.getProp(htmlEntity, "dye"),
       self = htmlEntity,
