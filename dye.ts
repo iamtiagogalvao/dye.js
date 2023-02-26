@@ -8,7 +8,7 @@ module CustomTypes {
 
 class Color {
   /**
-   * *Will check color format and distribute it to the right check color function
+   * Will check color format and distribute it to the right check color function
    * @param bgColor | string | - Color to be type checked
    * @returns - The new color for the element
    */
@@ -21,7 +21,7 @@ class Color {
   }
 
   /**
-   * *Will check RGB / RGBA balance
+   * Will check RGB / RGBA balance
    * @param color | string | - Color to check
    * @param format | string | - Color format, can be rgb or rgba
    * @returns | string | - The new color for the element
@@ -55,16 +55,95 @@ class Color {
   /**
    * Will check gradient brightness
    */
-  static checkGradient(color: string) {}
+  static checkGradient(color: string) {
+    /**
+     * Will extract all colors from a gradient string (HEX, RGB OR RGBA) and push them to an array
+     * @param gradient | string | Receives the gradient string
+     * @returns | array | An array with all extracted colors
+     */
+    const getGradientColors = (gradient: string): string[] => {
+      const colors = gradient.match(/#[0-9a-f]{3,6}|rgba?\([\d\s,./]+\)/gi);
+      return colors || [];
+    };
+
+    /**
+     * Will iterate every color present in the color array to find it's luminance
+     * @param color | string |
+     * @returns
+     */
+    const getColorLuminance = (color: string): number => {
+      let r, g, b, a;
+      if (color.startsWith("#")) {
+        // HEX
+        r = parseInt(color.substring(1, 3), 16);
+        g = parseInt(color.substring(3, 5), 16);
+        b = parseInt(color.substring(5, 7), 16);
+        a = 1;
+      } else if (color.startsWith("rgb")) {
+        // RGB or RGBA
+        const rgba = color
+          .substring(color.indexOf("(") + 1, color.lastIndexOf(")"))
+          .split(",")
+          .map((c) => parseFloat(c.trim()));
+        r = rgba[0];
+        g = rgba[1];
+        b = rgba[2];
+        a = rgba.length > 3 ? rgba[3] : 1;
+      } else {
+        // Unsupported color format
+        return 0;
+      }
+
+      // Blend color with white background based on alpha value
+      r = Math.round((1 - a) * 255 + a * r);
+      g = Math.round((1 - a) * 255 + a * g);
+      b = Math.round((1 - a) * 255 + a * b);
+
+      // Calculate luminance from final RGB values
+      return (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    };
+
+    //Check the color received
+    const gradientMatch = color.match(/^linear-gradient\((.+)\)$/);
+    if (!gradientMatch) {
+      return;
+    }
+
+    const gradientArguments = gradientMatch[1].split(",");
+
+    const gradientColors = getGradientColors(gradientArguments.join(","));
+
+    if (gradientColors.length > 1) {
+      //Set defaults if gradient actually qualifies as a gradient.
+      const luminances = gradientColors.map(getColorLuminance);
+
+      const minLuminance = Math.min(...luminances);
+      // const maxLuminance = Math.max(...luminances);
+      let textColor = "#ffffff";
+
+      if (gradientColors.length === 2) {
+        textColor = minLuminance > 0.5 ? "#000000" : "#ffffff";
+      } else if (gradientColors.length === 3) {
+        const middleIndex = Math.floor(gradientColors.length / 2);
+
+        if (middleIndex !== -1) {
+          const threshold = minLuminance > 0.9 ? 0.8 : 0.5;
+          textColor =
+            luminances[middleIndex] > threshold ? "#000000" : "#ffffff";
+        }
+      }
+
+      return textColor;
+    }
+  }
 }
 
-class Dye extends Color {
+class Dye {
   //Class Properties
   public bg: string;
   public imgFilter: string;
 
   constructor(htmlEntity: any) {
-    super();
     //Elements and Props to work with
     let selector = Dye.getProp(htmlEntity, "dye"),
       self = htmlEntity,
@@ -94,7 +173,6 @@ class Dye extends Color {
       : Dye.setColor(self, this.bg);
   }
 
-  //GET FUNCTIONS
   /**
    * *Gets Static BG Colors
    * @param element | any | - The element to target or the selector to an element
@@ -146,7 +224,6 @@ class Dye extends Color {
       : attrs.getNamedItem(attribute);
   }
 
-  //SET FUNCTIONS
   /**
    * *Will set filter of non img element
    * @param node | any | - The node which color will be changed

@@ -70,7 +70,7 @@ When you specify a selector, you need to identify it as a `class` or `id`, so pl
 
 Note that we use `.` or `#` to let dye.js know that the selector is and `id` or `class`.
 
-#Gradients
+### Gradients
 At the moment, the library does not support elements with gradients or images as bg.
 
 
