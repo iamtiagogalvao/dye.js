@@ -1,4 +1,4 @@
-/** Dye.js - © 2023 - Tiago M. Galvão - https://deviago.me */
+/** Dye.js - © 2023 - Tiago M. Galvão - https://tiagogalvao.com */
 
 //TYPES AND MODULES DEFINITIONS
 module CustomTypes {
